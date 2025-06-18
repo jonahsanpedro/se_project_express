@@ -14,8 +14,8 @@ const createItem = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
-      }
-      res.status(500).send({ message: "Error from createItem", err });
+      } else
+        return res.status(500).send({ message: "Error from createItem", err });
     });
 };
 
@@ -37,10 +37,11 @@ const updateItem = (req, res) => {
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: "Error from updateItem", err });
+      return res.status(500).send({ message: "Error from updateItem", err });
     });
 };
 
@@ -50,14 +51,15 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(200).send({}))
+    .then(() => res.status(200).send({}))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: "Error from deleteItem", err });
+      return res.status(500).send({ message: "Error from deleteItem", err });
     });
 };
 
@@ -66,10 +68,6 @@ module.exports = {
   getItems,
   updateItem,
   deleteItem,
-};
-
-module.exports.createClothingItem = (req, res) => {
-  console.log(req.user._id);
 };
 
 module.exports.likeItem = (req, res) =>
@@ -83,10 +81,11 @@ module.exports.likeItem = (req, res) =>
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: "Error from likeItem", err });
+      return res.status(500).send({ message: "Error from likeItem", err });
     });
 
 module.exports.dislikeItem = (req, res) =>
@@ -100,8 +99,9 @@ module.exports.dislikeItem = (req, res) =>
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: "Error from dislikeItem", err });
+      return res.status(500).send({ message: "Error from dislikeItem", err });
     });
