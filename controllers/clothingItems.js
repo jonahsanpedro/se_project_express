@@ -14,8 +14,8 @@ const createItem = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
-      } else
-        return res.status(500).send({ message: "Error from createItem", err });
+      }
+      return res.status(500).send({ message: "Error from createItem", err });
     });
 };
 
