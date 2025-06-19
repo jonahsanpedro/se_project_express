@@ -68,7 +68,7 @@ const deleteItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
+  // Comment out, updateItem, see above line 31
   deleteItem,
 };
 
