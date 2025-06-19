@@ -28,7 +28,6 @@ const getItems = (req, res) => {
     });
 };
 
-
 // COMMENT OUT, not needed for Project 12, keeping for reference
 // const updateItem = (req, res) => {
 //   const { itemId } = req.params;
@@ -76,7 +75,7 @@ module.exports = {
 module.exports.likeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.id,
-    { $addToSet: { likes: req.user._id } }
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
