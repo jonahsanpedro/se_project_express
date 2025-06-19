@@ -1,6 +1,6 @@
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
-const DEFAULT = 500;
+const BAD_REQUEST = "Invalid request";
+const NOT_FOUND = "Not found";
+const DEFAULT = "Internal server error";
 
 module.exports = {
   BAD_REQUEST,
