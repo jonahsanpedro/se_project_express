@@ -65,14 +65,7 @@ const deleteItem = (req, res) => {
     });
 };
 
-module.exports = {
-  createItem,
-  getItems,
-  // Comment out, updateItem, see above line 31
-  deleteItem,
-};
-
-module.exports.likeItem = (req, res) =>
+const likeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -90,7 +83,7 @@ module.exports.likeItem = (req, res) =>
       return res.status(500).send({ message: DEFAULT, err });
     });
 
-module.exports.dislikeItem = (req, res) =>
+const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
@@ -107,3 +100,12 @@ module.exports.dislikeItem = (req, res) =>
       }
       return res.status(500).send({ message: DEFAULT, err });
     });
+
+module.exports = {
+  createItem,
+  getItems,
+  // Comment out, updateItem, see above line 31
+  deleteItem,
+  likeItem,
+  dislikeItem,
+};
