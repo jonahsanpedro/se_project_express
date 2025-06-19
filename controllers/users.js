@@ -1,14 +1,12 @@
 const User = require("../models/user");
+const { BAD_REQUEST, DEFAULT, NOT_FOUND } = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: DEFAULT, err });
     });
 };
 
@@ -20,9 +18,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(400).send({ message: BAD_REQUEST });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: DEFAULT });
     });
 };
 
@@ -35,12 +33,12 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(404).send({ message: NOT_FOUND });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(400).send({ message: BAD_REQUEST });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: DEFAULT });
     });
 };
 

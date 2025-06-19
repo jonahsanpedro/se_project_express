@@ -12,8 +12,6 @@ mongoose
   })
   .catch(console.error);
 
-const routes = require("./routes");
-
 app.use((req, res, next) => {
   req.user = {
     _id: "685206f5c9a8a710e96e676d",
@@ -22,7 +20,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(routes);
 
 app.use("/", mainRouter);
 
