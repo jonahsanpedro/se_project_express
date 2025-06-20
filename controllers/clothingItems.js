@@ -25,7 +25,7 @@ const createItem = (req, res) => {
       }
       return res
         .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR, err });
+        .send({ message: INTERNAL_SERVER_ERROR });
     });
 };
 
@@ -33,6 +33,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
+      console.error(err);
       res
         .status(INTERNAL_SERVER_ERROR_CODE)
         .send({ message: INTERNAL_SERVER_ERROR });
