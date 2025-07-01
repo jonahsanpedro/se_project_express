@@ -15,6 +15,10 @@ const {
   likeItem,
   dislikeItem,
 } = require("./controllers/clothingItems");
+const {
+  INTERNAL_SERVER_ERROR_CODE,
+  INTERNAL_SERVER_ERROR,
+} = require("./utils/errors");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -32,8 +36,8 @@ app.use(express.json());
 
 app.post("/signin", login);
 app.post("/signup", createUser);
-app.patch("/users", auth, updateCurrentUser);
-app.get("/users", auth, getCurrentUser);
+app.patch("/users/me", auth, updateCurrentUser);
+app.get("/users/me", auth, getCurrentUser);
 
 app.post("/items", auth, createItem);
 app.delete("/items/:id", auth, deleteItem);
@@ -41,6 +45,14 @@ app.put("/items/:id/likes", auth, likeItem);
 app.delete("/items/:id/likes", auth, dislikeItem);
 
 app.use("/", mainRouter);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res
+    .status(INTERNAL_SERVER_ERROR_CODE)
+    .send({ message: INTERNAL_SERVER_ERROR });
+});
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

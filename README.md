@@ -6,6 +6,16 @@ Throughout this project we set up a backend Api, gained more practice on route h
 
 [GitHub Repository] https://github.com/jonahsanpedro/se_project_express
 
+# Project 13
+
+This sprint focused on implementing authentication and authorization. Adding on to our Project 12 we implemented these concepts as well as other new concepts. Similartly to our last project however we had to include new controllers and routes and apply authentication and an authorization middleware. We also learned to include validation to check if users and passwords matched in a database. Finally we made us of Postman and Github Actions to test our work.
+
+Running Github Actions led to an error but it was stated in the project that we should remove the hard-coded user object. This was leading to an errors under test_endpoints and I will include the screenshot below.
+
+![Hard-coded user object error](image-1.png)
+
+[GitHub Repository] https://github.com/jonahsanpedro/se_project_express
+
 # WTWR (What to Wear?): Back End
 
 The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
