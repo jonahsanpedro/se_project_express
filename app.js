@@ -47,7 +47,7 @@ app.delete("/items/:id/likes", auth, dislikeItem);
 app.use("/", mainRouter);
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error(err.stack);
   res
     .status(INTERNAL_SERVER_ERROR_CODE)
