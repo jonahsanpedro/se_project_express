@@ -6,6 +6,7 @@ const {
   INTERNAL_SERVER_ERROR,
   INTERNAL_SERVER_ERROR_CODE,
   NOT_FOUND_CODE,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -59,21 +60,30 @@ const getItems = (req, res) => {
 //     });
 // };
 
-const deleteItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
-    .orFail()
-    .then(() => res.status(200).send({ message: "Item deleted successfully" }))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_CODE).send({ message: NOT_FOUND });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
-      }
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
-    });
+const deleteItem = async (req, res) => {
+  try {
+    const item = await ClothingItem.findById(req.params.id);
+
+    if (!item) {
+      return res.status(NOT_FOUND_CODE).send({ message: NOT_FOUND });
+    }
+
+    if (item.owner.toString() === req.user._id.toString()) {
+      // User owns this item - deletion allowed
+      await ClothingItem.findByIdAndDelete(req.params.id);
+      return res.status(200).send({ message: "Item deleted successfully" });
+    } else {
+      // User doesn't own this item - return 403 error
+      return res.status(FORBIDDEN).send({ message: FORBIDDEN });
+    }
+  } catch (err) {
+    if (err.name === "CastError") {
+      return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
+    }
+    return res
+      .status(INTERNAL_SERVER_ERROR_CODE)
+      .send({ message: INTERNAL_SERVER_ERROR });
+  }
 };
 
 const likeItem = (req, res) =>

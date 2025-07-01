@@ -1,6 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const mainRouter = require("./routes/index");
+const {
+  login,
+  createUser,
+  updateCurrentUser,
+  getCurrentUser,
+} = require("./controllers/users");
+const auth = require("./middlewares/auth");
+const {
+  createItem,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+} = require("./controllers/clothingItems");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -12,14 +26,19 @@ mongoose
   })
   .catch(console.error);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "685206f5c9a8a710e96e676d",
-  };
-  next();
-});
+app.use(cors());
 
 app.use(express.json());
+
+app.post("/signin", login);
+app.post("/signup", createUser);
+app.patch("/users/me", auth, updateCurrentUser);
+app.get("/users/me", auth, getCurrentUser);
+
+app.post("/items", auth, createItem);
+app.delete("/items/:id", auth, deleteItem);
+app.put("/items/:id/likes", auth, likeItem);
+app.delete("/items/:id/likes", auth, dislikeItem);
 
 app.use("/", mainRouter);
 

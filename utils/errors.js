@@ -4,6 +4,12 @@ const INTERNAL_SERVER_ERROR = "500: Internal server error";
 const BAD_REQUEST_CODE = 400;
 const NOT_FOUND_CODE = 404;
 const INTERNAL_SERVER_ERROR_CODE = 500;
+const CONFLICT = "409: Conflict";
+const CONFLICT_CODE = 409;
+const UNAUTHORIZED = "401: Unauthorized";
+const UNAUTHORIZED_CODE = 401;
+const FORBIDDEN = "403: Forbidden";
+const FORBIDDEN_CODE = 403;
 
 module.exports = {
   BAD_REQUEST,
@@ -12,4 +18,10 @@ module.exports = {
   BAD_REQUEST_CODE,
   NOT_FOUND_CODE,
   INTERNAL_SERVER_ERROR_CODE,
+  CONFLICT,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  CONFLICT_CODE,
+  UNAUTHORIZED_CODE,
+  FORBIDDEN_CODE,
 };

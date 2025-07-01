@@ -16,7 +16,7 @@ router.get("/", getItems);
 // comment out, keeping for reference
 // router.put("/:itemId", updateItem);
 
-router.delete("/:itemId", deleteItem);
+router.delete("/:id", deleteItem);
 
 router.put("/:id/likes", likeItem);
 
