@@ -36,13 +36,6 @@ app.use(express.json());
 
 app.post("/signin", login);
 app.post("/signup", createUser);
-app.patch("/users/me", auth, updateCurrentUser);
-app.get("/users/me", auth, getCurrentUser);
-
-app.post("/items", auth, createItem);
-app.delete("/items/:id", auth, deleteItem);
-app.put("/items/:id/likes", auth, likeItem);
-app.delete("/items/:id/likes", auth, dislikeItem);
 
 app.use("/", mainRouter);
 

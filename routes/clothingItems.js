@@ -11,7 +11,7 @@ const auth = require("../middlewares/auth");
 
 router.post("/", auth, createItem);
 
-router.get("/", auth, getItems);
+router.get("/", getItems);
 
 router.delete("/:id", auth, deleteItem);
 
