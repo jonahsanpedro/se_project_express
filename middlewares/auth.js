@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../utils/config").JWT_SECRET;
+const { JWT_SECRET } = require("../utils/config");
 const {
   UNAUTHORIZED,
   UNAUTHORIZED_CODE,
@@ -16,11 +16,6 @@ module.exports = (req, res, next) => {
 
   const token = authorization.replace("Bearer", "").trim();
 
-  console.log(token);
-  console.log("Authorization header:", authorization);
-  console.log("Token after extraction:", token);
-  console.log("Token length:", token ? token.length : "token is falsy");
-
   let payload;
 
   try {
@@ -32,5 +27,5 @@ module.exports = (req, res, next) => {
 
   req.user = payload;
 
-  next();
+  return next();
 };

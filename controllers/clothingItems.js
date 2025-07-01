@@ -72,10 +72,8 @@ const deleteItem = async (req, res) => {
       // User owns this item - deletion allowed
       await ClothingItem.findByIdAndDelete(req.params.id);
       return res.status(200).send({ message: "Item deleted successfully" });
-    } else {
-      // User doesn't own this item - return 403 error
-      return res.status(FORBIDDEN).send({ message: FORBIDDEN });
     }
+    return res.status(FORBIDDEN).send({ message: FORBIDDEN });
   } catch (err) {
     if (err.name === "CastError") {
       return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });

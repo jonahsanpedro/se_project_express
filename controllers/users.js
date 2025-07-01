@@ -1,7 +1,7 @@
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = require("../utils/config").JWT_SECRET;
+const User = require("../models/user");
+const { JWT_SECRET } = require("../utils/config");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -41,7 +41,8 @@ const createUser = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
-      } else if (err.code === 11000) {
+      }
+      if (err.code === 11000) {
         return res.status(CONFLICT_CODE).send({
           message: CONFLICT,
         });
