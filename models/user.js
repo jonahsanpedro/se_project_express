@@ -44,17 +44,23 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .select("+password")
     .then((user) => {
       if (!user) {
-        return Promise.reject({
-          status: UNAUTHORIZED_CODE,
-          message: UNAUTHORIZED,
-        });
+        // return Promise.reject({
+        //   status: UNAUTHORIZED_CODE,
+        //   message: UNAUTHORIZED,
+        // });
+        const err = new Error(UNAUTHORIZED);
+        err.status = UNAUTHORIZED_CODE;
+        return Promise.reject(err);
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          return Promise.reject({
-            status: UNAUTHORIZED_CODE,
-            message: UNAUTHORIZED,
-          });
+          // return Promise.reject({
+          //   status: UNAUTHORIZED_CODE,
+          //   message: UNAUTHORIZED,
+          // });
+          const err = new Error(UNAUTHORIZED);
+          err.status = UNAUTHORIZED_CODE;
+          return Promise.reject(err);
         }
         return user;
       });
