@@ -15,16 +15,17 @@ const {
   UNAUTHORIZED_CODE,
 } = require("../utils/errors");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
-    });
-};
+// Not needed for Project 13, will keep for reference for now
+// const getUsers = (req, res) => {
+//   User.find({})
+//     .then((users) => res.status(200).send(users))
+//     .catch((err) => {
+//       console.error(err);
+//       return res
+//         .status(INTERNAL_SERVER_ERROR_CODE)
+//         .send({ message: INTERNAL_SERVER_ERROR });
+//     });
+// };
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -71,7 +72,7 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
 
-      if (err.status === UNAUTHORIZED_CODE) {
+      if (err.message === "Incorrect email or password") {
         return res.status(UNAUTHORIZED_CODE).send({ message: UNAUTHORIZED });
       }
       return res
@@ -126,7 +127,6 @@ const updateCurrentUser = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   createUser,
   getCurrentUser,
   login,

@@ -2,19 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
-const {
-  login,
-  createUser,
-  updateCurrentUser,
-  getCurrentUser,
-} = require("./controllers/users");
-const auth = require("./middlewares/auth");
-const {
-  createItem,
-  deleteItem,
-  likeItem,
-  dislikeItem,
-} = require("./controllers/clothingItems");
+const { login, createUser } = require("./controllers/users");
+
 const {
   INTERNAL_SERVER_ERROR_CODE,
   INTERNAL_SERVER_ERROR,
@@ -40,7 +29,7 @@ app.post("/signup", createUser);
 app.use("/", mainRouter);
 
 // Error handling middleware
-app.use((err, res) => {
+app.use((err, _req, res, _next) => {
   console.error(err.stack);
   res
     .status(INTERNAL_SERVER_ERROR_CODE)

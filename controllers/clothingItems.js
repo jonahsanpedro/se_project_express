@@ -7,6 +7,7 @@ const {
   INTERNAL_SERVER_ERROR_CODE,
   NOT_FOUND_CODE,
   FORBIDDEN,
+  FORBIDDEN_CODE,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -73,7 +74,7 @@ const deleteItem = async (req, res) => {
       await ClothingItem.findByIdAndDelete(req.params.id);
       return res.status(200).send({ message: "Item deleted successfully" });
     }
-    return res.status(FORBIDDEN).send({ message: FORBIDDEN });
+    return res.status(FORBIDDEN_CODE).send({ message: FORBIDDEN });
   } catch (err) {
     if (err.name === "CastError") {
       return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
