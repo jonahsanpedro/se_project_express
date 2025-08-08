@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+require("dotenv").config();
 const cors = require("cors");
 const mainRouter = require("./routes/index");
+
 const { login, createUser } = require("./controllers/users");
 const { errorHandler } = require("./middlewares/error-handler");
 const { errors } = require("celebrate");
@@ -27,7 +29,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use(requestLogger);
-app.use(mainRouter);
 
 app.use(errorLogger);
 
