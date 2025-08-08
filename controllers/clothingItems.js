@@ -1,19 +1,15 @@
 const ClothingItem = require("../models/clothingItem");
+
 const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  BAD_REQUEST_CODE,
-  INTERNAL_SERVER_ERROR,
-  INTERNAL_SERVER_ERROR_CODE,
-  NOT_FOUND_CODE,
-  FORBIDDEN,
-  FORBIDDEN_CODE,
-} = require("../utils/errors");
+  errorHandler,
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+  ForbiddenError,
+  ConflictError,
+} = require("../middlewares/error-handler");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -23,11 +19,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
+        return BadRequestError(err, req, res);
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
+      return errorHandler(err, req, res);
     });
 };
 
@@ -35,10 +29,11 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
-      console.error(err);
-      res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
+      if (err.name === "CastError") {
+        next(new BadRequestError("The request is invalid"));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -66,7 +61,7 @@ const deleteItem = async (req, res) => {
     const item = await ClothingItem.findById(req.params.id);
 
     if (!item) {
-      return res.status(NOT_FOUND_CODE).send({ message: NOT_FOUND });
+      return next(new NotFoundError("Item not found"));
     }
 
     if (item.owner.toString() === req.user._id.toString()) {
@@ -74,14 +69,15 @@ const deleteItem = async (req, res) => {
       await ClothingItem.findByIdAndDelete(req.params.id);
       return res.status(200).send({ message: "Item deleted successfully" });
     }
-    return res.status(FORBIDDEN_CODE).send({ message: FORBIDDEN });
+    return next(
+      new ForbiddenError("You do not have permission to delete this item")
+    );
   } catch (err) {
     if (err.name === "CastError") {
-      return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
+      next(new BadRequestError("Invalid item ID"));
+    } else {
+      next(err);
     }
-    return res
-      .status(INTERNAL_SERVER_ERROR_CODE)
-      .send({ message: INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -95,14 +91,12 @@ const likeItem = (req, res) =>
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_CODE).send({ message: NOT_FOUND });
+        next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
+        return next(new BadRequestError("Invalid item ID"));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
+      return next(err);
     });
 
 const dislikeItem = (req, res) =>
@@ -115,14 +109,12 @@ const dislikeItem = (req, res) =>
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_CODE).send({ message: NOT_FOUND });
+        next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST });
+        return next(new BadRequestError("Invalid item ID"));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: INTERNAL_SERVER_ERROR });
+      return next(err);
     });
 
 module.exports = {

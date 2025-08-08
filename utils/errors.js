@@ -1,8 +1,8 @@
 const BAD_REQUEST = "400: Invalid request";
-const NOT_FOUND = "404: Not found";
-const INTERNAL_SERVER_ERROR = "500: Internal server error";
 const BAD_REQUEST_CODE = 400;
+const NOT_FOUND = "404: Not found";
 const NOT_FOUND_CODE = 404;
+const INTERNAL_SERVER_ERROR = "500: Internal server error";
 const INTERNAL_SERVER_ERROR_CODE = 500;
 const CONFLICT = "409: Conflict";
 const CONFLICT_CODE = 409;
