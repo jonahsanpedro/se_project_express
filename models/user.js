@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
-const { UNAUTHORIZED, UNAUTHORIZED_CODE } = require("../utils/errors");
+import mongoose from "mongoose";
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import { UNAUTHORIZED, UnauthorizedError } from "../utils/errors";
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -42,28 +42,21 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select("+password")
     .then((user) => {
-      if (!user) {
-        // return Promise.reject({
-        //   status: UNAUTHORIZED_CODE,
-        //   message: UNAUTHORIZED,
-        // });
-        const err = new Error(UNAUTHORIZED);
-        err.status = UNAUTHORIZED_CODE;
+      if (!user || !user.password) {
+        const err = new UnauthorizedError(UNAUTHORIZED);
         return Promise.reject(err);
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          // return Promise.reject({
-          //   status: UNAUTHORIZED_CODE,
-          //   message: UNAUTHORIZED,
-          // });
-          const err = new Error(UNAUTHORIZED);
-          err.status = UNAUTHORIZED_CODE;
+          const err = new UnauthorizedError(UNAUTHORIZED);
           return Promise.reject(err);
         }
         return user;
       });
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

@@ -9,11 +9,6 @@ const { errorHandler } = require("./middlewares/error-handler");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
-const {
-  INTERNAL_SERVER_ERROR_CODE,
-  INTERNAL_SERVER_ERROR,
-} = require("./utils/errors");
-
 const app = express();
 const { PORT = 3001 } = process.env;
 
@@ -30,16 +25,20 @@ app.use(express.json());
 
 app.use(requestLogger);
 
-app.use(errorLogger);
-
-app.use(errors());
-
-app.use(errorHandler);
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
 
 app.post("/signin", login);
 app.post("/signup", createUser);
 
 app.use("/", mainRouter);
+
+app.use(errors());
+
+app.use(errorHandler);
 
 // Error handling middleware, using imported errorHandler instead
 // app.use((err, _req, res, _next) => {

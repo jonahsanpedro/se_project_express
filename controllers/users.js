@@ -1,43 +1,10 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const { JWT_SECRET } = require("../utils/config");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from ("../models/user");
+import { JWT_SECRET } from "../utils/config";
+import { BadRequestError, NotFoundError, ConflictError, UnauthorizedError } from "../utils/errors";
 
-// handled by errorHandler middleware
-// const {
-//   BAD_REQUEST,
-//   NOT_FOUND,
-//   NOT_FOUND_CODE,
-//   BAD_REQUEST_CODE,
-//   INTERNAL_SERVER_ERROR_CODE,
-//   INTERNAL_SERVER_ERROR,
-//   CONFLICT,
-//   UNAUTHORIZED,
-//   CONFLICT_CODE,
-//   UNAUTHORIZED_CODE,
-// } = require("../utils/errors");
-
-const {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-  ForbiddenError,
-  ConflictError,
-} = require("../middlewares/error-handler");
-
-// Not needed for Project 13, will keep for reference for now
-// const getUsers = (req, res) => {
-//   User.find({})
-//     .then((users) => res.status(200).send(users))
-//     .catch((err) => {
-//       console.error(err);
-//       return res
-//         .status(INTERNAL_SERVER_ERROR_CODE)
-//         .send({ message: INTERNAL_SERVER_ERROR });
-//     });
-// };
-
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   bcrypt
@@ -46,12 +13,12 @@ const createUser = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(200).send(userObj);
+      res.status(201).send(userObj);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid user data"));
+        return next(new BadRequestError("Invalid user data"));
       }
       if (err.code === 11000) {
         return next(new ConflictError("User already exists"));
@@ -60,7 +27,7 @@ const createUser = (req, res) => {
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -78,14 +45,12 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
 
-      if (err.message === "UnauthorizedError") {
-        return next(new UnauthorizedError("Invalid email or password"));
-      }
-      return next(err);
+      // Always return UnauthorizedError for login failures
+      return next(new UnauthorizedError("Invalid email or password"));
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
 
   User.findById(userId)
@@ -103,7 +68,7 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-const updateCurrentUser = (req, res) => {
+const updateCurrentUser = (req, res, next) => {
   const { name, avatar } = req.body;
   const userId = req.user._id;
 
@@ -122,11 +87,14 @@ const updateCurrentUser = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return next(new NotFoundError("User not found"));
       }
+      if (err.name === "CastError") {
+        return next(new BadRequestError("Invalid user ID"));
+      }
       return next(err);
     });
 };
 
-module.exports = {
+export default {
   createUser,
   getCurrentUser,
   login,
