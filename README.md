@@ -26,6 +26,8 @@ The back-end project is focused on creating a server for the WTWR application. Y
 
 `npm run dev` — to launch the server with the hot reload feature
 
-### Testing
+# Project 15
 
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+This sprint introduced cloud deployment and expanded out knowledge on advanced middleware. We also were introduced to request validation in separate middlewares using joi, celebrate and validator while logging requets and errors with winston. This project was different from the others in the past as I deployed my first website on the web.
+
+[Domain] https://vheissu.jumpingcrab.com/
