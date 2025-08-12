@@ -1,15 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
 
-const {
-  errorHandler,
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-  ForbiddenError,
-  ConflictError,
-} = require("../middlewares/error-handler");
+const BadRequestError = require("../errors/bad-request-err");
+const NotFoundError = require("../errors/not-found-err");
+const ForbiddenError = require("../errors/forbidden-err");
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -19,44 +14,24 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return BadRequestError(err, req, res);
+        return next(new BadRequestError("Invalid item data"));
       }
-      return errorHandler(err, req, res);
+      return next(err);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send({ data: items }))
     .catch((err) => {
       if (err.name === "CastError") {
-        next(new BadRequestError("The request is invalid"));
-      } else {
-        next(err);
+        return next(new BadRequestError("Invalid item ID"));
       }
+      return next(err);
     });
 };
 
-// COMMENT OUT, not needed for Project 12, keeping for reference
-// const updateItem = (req, res) => {
-//   const { itemId } = req.params;
-//   const { imageUrl } = req.body;
-
-//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-//     .orFail()
-//     .then((item) => res.status(200).send({ data: item }))
-//     .catch((err) => {
-//       if (err.name === "DocumentNotFoundError") {
-//         return res.status(404).send({ message: NOT_FOUND });
-//       }
-//       if (err.name === "CastError") {
-//         return res.status(400).send({ message: BAD_REQUEST });
-//       }
-//       return res.status(500).send({ message: DEFAULT, err });
-//     });
-// };
-
-const deleteItem = async (req, res) => {
+const deleteItem = async (req, res, next) => {
   try {
     const item = await ClothingItem.findById(req.params.id);
 
@@ -74,14 +49,13 @@ const deleteItem = async (req, res) => {
     );
   } catch (err) {
     if (err.name === "CastError") {
-      next(new BadRequestError("Invalid item ID"));
-    } else {
-      next(err);
+      return next(new BadRequestError("Invalid item ID"));
     }
+    return next(err);
   }
 };
 
-const likeItem = (req, res) =>
+const likeItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -99,7 +73,7 @@ const likeItem = (req, res) =>
       return next(err);
     });
 
-const dislikeItem = (req, res) =>
+const dislikeItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },

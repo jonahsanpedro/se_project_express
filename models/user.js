@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import validator from "validator";
-import bcrypt from "bcryptjs";
-import { UNAUTHORIZED, UnauthorizedError } from "../utils/errors";
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const { UnauthorizedError } = require("../utils/errors");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -43,20 +43,22 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .select("+password")
     .then((user) => {
       if (!user || !user.password) {
-        const err = new UnauthorizedError(UNAUTHORIZED);
-        return Promise.reject(err);
+        return Promise.reject(
+          new UnauthorizedError("Invalid email or password")
+        );
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          const err = new UnauthorizedError(UNAUTHORIZED);
-          return Promise.reject(err);
+          return Promise.reject(
+            new UnauthorizedError("Invalid email or password")
+          );
         }
         return user;
       });
     })
-    .catch((err) => {
-      return Promise.reject(err);
+    .catch(() => {
+      throw new UnauthorizedError("Invalid email or password");
     });
 };
 
-export default mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);

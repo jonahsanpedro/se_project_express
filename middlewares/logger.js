@@ -1,6 +1,5 @@
 const winston = require("winston");
 const expressWinston = require("express-winston");
-const { request } = require("express");
 
 // create the custom formatter
 const messageFormat = winston.format.combine(

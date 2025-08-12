@@ -11,59 +11,17 @@ const UNAUTHORIZED_CODE = 401;
 const FORBIDDEN = "403: Forbidden";
 const FORBIDDEN_CODE = 403;
 
-class BadRequestError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = BAD_REQUEST_CODE;
-  }
-}
-
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = NOT_FOUND_CODE;
-  }
-}
-
-class InternalServerError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = INTERNAL_SERVER_ERROR_CODE;
-  }
-}
-
-class ConflictError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = CONFLICT_CODE;
-  }
-}
-
-class UnauthorizedError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = UNAUTHORIZED_CODE;
-  }
-}
-
-class ForbiddenError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = FORBIDDEN_CODE;
-  }
-}
-
-export {
+module.exports = {
   BAD_REQUEST,
+  BAD_REQUEST_CODE,
   NOT_FOUND,
+  NOT_FOUND_CODE,
   INTERNAL_SERVER_ERROR,
+  INTERNAL_SERVER_ERROR_CODE,
   CONFLICT,
+  CONFLICT_CODE,
   UNAUTHORIZED,
+  UNAUTHORIZED_CODE,
   FORBIDDEN,
-  BadRequestError,
-  NotFoundError,
-  InternalServerError,
-  ConflictError,
-  UnauthorizedError,
-  ForbiddenError,
+  FORBIDDEN_CODE,
 };

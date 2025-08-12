@@ -1,17 +1,14 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const {
-  UNAUTHORIZED,
-  UNAUTHORIZED_CODE,
-  FORBIDDEN_CODE,
-  FORBIDDEN,
-} = require("../utils/errors");
+const { UnauthorizedError, ForbiddenError } = require("../utils/errors");
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer")) {
-    return res.status(UNAUTHORIZED_CODE).send({ message: UNAUTHORIZED });
+    return next(
+      new UnauthorizedError("Authorization header is missing or invalid")
+    );
   }
 
   const token = authorization.replace("Bearer", "").trim();
@@ -22,7 +19,7 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     console.error(err);
-    return res.status(FORBIDDEN_CODE).send({ message: FORBIDDEN });
+    return next(new ForbiddenError("Access denied"));
   }
 
   req.user = payload;

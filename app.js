@@ -1,13 +1,31 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
 require("dotenv").config();
 const cors = require("cors");
-const mainRouter = require("./routes/index");
 
-const { login, createUser } = require("./controllers/users");
+const {
+  login,
+  createUser,
+  getCurrentUser,
+  updateCurrentUser,
+} = require("./controllers/users");
+const {
+  createItem,
+  getItems,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+} = require("./controllers/clothingItems");
 const { errorHandler } = require("./middlewares/error-handler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const {
+  validateId,
+  validateUserBody,
+  validateAuthentication,
+  validateCardBody,
+} = require("./middlewares/validation");
+const auth = require("./middlewares/auth");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -31,22 +49,19 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post("/signin", login);
-app.post("/signup", createUser);
-
-app.use("/", mainRouter);
+app.post("/signin", validateAuthentication, login);
+app.post("/signup", validateUserBody, createUser);
+app.get("/users/me", auth, getCurrentUser);
+app.get("/items", getItems);
+app.patch("/users/me", auth, validateUserBody, updateCurrentUser);
+app.post("/items", auth, validateCardBody, createItem);
+app.delete("/items/:id", auth, validateId, deleteItem);
+app.put("/items/:id/likes", auth, validateId, likeItem);
+app.delete("/items/:id/likes", auth, validateId, dislikeItem);
 
 app.use(errors());
-
+app.use(errorLogger);
 app.use(errorHandler);
-
-// Error handling middleware, using imported errorHandler instead
-// app.use((err, _req, res, _next) => {
-//   console.error(err.stack);
-//   res
-//     .status(INTERNAL_SERVER_ERROR_CODE)
-//     .send({ message: INTERNAL_SERVER_ERROR });
-// });
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

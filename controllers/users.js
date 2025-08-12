@@ -1,8 +1,12 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from ("../models/user");
-import { JWT_SECRET } from "../utils/config";
-import { BadRequestError, NotFoundError, ConflictError, UnauthorizedError } from "../utils/errors";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const { JWT_SECRET } = require("../utils/config");
+
+const BadRequestError = require("../errors/bad-request-err");
+const NotFoundError = require("../errors/not-found-err");
+const ConflictError = require("../errors/conflict-err");
+const UnauthorizedError = require("../errors/unauthorized-err");
 
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
@@ -44,8 +48,6 @@ const login = (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-
-      // Always return UnauthorizedError for login failures
       return next(new UnauthorizedError("Invalid email or password"));
     });
 };
@@ -94,7 +96,7 @@ const updateCurrentUser = (req, res, next) => {
     });
 };
 
-export default {
+module.exports = {
   createUser,
   getCurrentUser,
   login,
