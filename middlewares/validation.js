@@ -68,9 +68,8 @@ module.exports.validateAuthentication = celebrate({
 module.exports.validateId = celebrate({
   params: Joi.object().keys({
     id: Joi.string().alphanum().length(24).messages({
-      "string.length": 'The "itemId" must be 24 characters long',
-      "string.alphanum":
-        'The "itemId" must contain only alphanumeric characters',
+      "string.length": 'The "id" must be 24 characters long',
+      "string.alphanum": 'The "id" must contain only alphanumeric characters',
     }),
   }),
 });
