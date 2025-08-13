@@ -59,8 +59,12 @@ app.delete("/items/:id", auth, validateId, deleteItem);
 app.put("/items/:id/likes", auth, validateId, likeItem);
 app.delete("/items/:id/likes", auth, validateId, dislikeItem);
 
-app.use(errors());
+app.use("*", (req, res, next) => {
+  next(new NotFoundError("Route not found"));
+});
+
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
