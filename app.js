@@ -24,7 +24,9 @@ const {
   validateUserBody,
   validateAuthentication,
   validateCardBody,
+  validateProfile,
 } = require("./middlewares/validation");
+const { NotFoundError } = require("./utils/errors");
 const auth = require("./middlewares/auth");
 
 const app = express();
@@ -53,13 +55,13 @@ app.post("/signin", validateAuthentication, login);
 app.post("/signup", validateUserBody, createUser);
 app.get("/users/me", auth, getCurrentUser);
 app.get("/items", getItems);
-app.patch("/users/me", auth, validateUserBody, updateCurrentUser);
+app.patch("/users/me", auth, validateProfile, updateCurrentUser);
 app.post("/items", auth, validateCardBody, createItem);
 app.delete("/items/:id", auth, validateId, deleteItem);
 app.put("/items/:id/likes", auth, validateId, likeItem);
 app.delete("/items/:id/likes", auth, validateId, dislikeItem);
 
-app.use("*", (req, res, next) => {
+app.use((req, res, next) => {
   next(new NotFoundError("Route not found"));
 });
 
